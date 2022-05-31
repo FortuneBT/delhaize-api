@@ -1,5 +1,7 @@
 from fastapi import FastAPI,File,UploadFile,Form
+from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
+from requests import request
 from Utils.routes_stream import Routes as Routes_stream
 from Utils.routes_page import Routes as Routes_page
 from Utils.routes_request import Routes as Routes_request
@@ -15,6 +17,9 @@ from Utils.camera import Stream
 from Utils.validation import Switch
 import cv2
 import numpy as np
+import main as m
+import json
+import base64
 
 
 class Routes():
@@ -34,6 +39,9 @@ class Routes():
         self.pages = None
         self.switch = True
         self.filename = None
+        self.prediction = None
+        self.time_prediction = None
+        self.source_filename = None
         self.text = ""
         
     def create(self):
@@ -76,6 +84,12 @@ class Routes():
         self.set_switch(True)
         self.text = ""
 
+    def detect_date(self):
+        #print("PRED:",m.main(self.image))
+        self.prediction,self.time_prediction = m.main(self.image)
+        print("PREDICTION:",self.prediction)
+        print("TIME PREDICTION:",self.time_prediction)
+
     def start(self):
         print("Start Web Application Delhaize")
         self.start_webcam()
@@ -114,6 +128,7 @@ class Routes():
         @app.get("/picture/",response_class=HTMLResponse)
         async def picture(request:Request):
             print("loading picture")
+            self.source_filename = None
             context = {"request":request}
             return templates.TemplateResponse("picture.html",context)
 
@@ -218,23 +233,39 @@ class Routes():
             
             return {"file_name":filename}
 
-        @app.post("/submitform")
-        async def handle_form(my_picture_file:UploadFile = File(...)):
+        @app.post("/submitform",response_class=HTMLResponse)
+        async def handle_form(request:Request, my_picture_file:UploadFile = File(...)):
             print("type of file : ",my_picture_file.content_type)
             print("name of the file : ",my_picture_file.filename)
-            filename = my_picture_file.filename
+            #filename = my_picture_file.filename
 
-            image = cv2.imdecode(np.frombuffer(my_picture_file.file.read(), np.uint8),cv2.IMREAD_COLOR)
+            file = await my_picture_file.read()
+            print("type of file : ",type(file))
+            print("my_picture_file: ",type(my_picture_file))
+            #print("my_picture_file.file: ",type(my_picture_file.file))
+            self.source_filename = "picture2.jpg"
+            image = cv2.imdecode(np.frombuffer(file, np.uint16),cv2.IMREAD_COLOR)
+            cv2.imwrite("./static/Images/" + self.source_filename,image)
+            print("Picture saved in 'picture2.jpg'")
+            self.image = image
+            self.detect_date()
+            context = {"request":request}
+            context["filename"] = my_picture_file.filename
+            context["prediction"] = self.prediction
+            context["time_prediction"] = round(float(self.time_prediction),2)
+            context["source_filename"] = self.source_filename
+            return templates.TemplateResponse("detected.html",context)
 
 
-
-            file = my_picture_file.file
-            # image = cv2.imread(filename)
-            print("type of image  : ",type(file))
-            print(file)
-            file = await open(file,"wb")
-
-            
-
-            #cv2.imshow("my window",image)
-            #content_of_picture = await my_picture_file.read()
+        @app.post("/API")
+        async def api(file:bytes=File()):
+            print("type of file : ",type(file))
+            image = cv2.imdecode(np.frombuffer(file, np.uint16),cv2.IMREAD_COLOR)
+            self.image = image
+            self.detect_date()
+            context = {}
+            context["prediction"] = self.prediction
+            context["time_prediction"] = round(float(self.time_prediction),2)
+            print(context)
+            return context
+      

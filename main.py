@@ -9,6 +9,7 @@ from FCOS.configs.configs import fcos_cfgs
 from FCOS.fcos_core.predictor import COCODemo
 from DMY.dt_and_rec import DetectRecognizeDmy
 from DMY.dmy_utils import load_networks
+import numpy as np
 
 if getattr(sys, 'frozen', False):
     path = Path(sys._MEIPASS)

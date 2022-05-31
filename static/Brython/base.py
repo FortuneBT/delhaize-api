@@ -159,6 +159,11 @@ class Camera():
             document["text_to_show"].html = "error " + request.text
 
 
+def change_button():
+    print("Change the button")
+    document["button-load-image"].text = "Loading..."
+   
+
 
 if "my_button_picture" in document:
     print("my_button_picture found")
@@ -208,5 +213,23 @@ if "my-loaded-image" in document:
         #     print("not empty")
 else:
     print("!!!!!!!!!!my_loaded_image not found")
+            
+            
+            
+
+if "button-load-image" in document:
+    print("button-load-image found")
+    @bind('#button-load-image',"click")             
+    def image_load(ev):
+        print("load on #button-load-image !")
+        change_button()
+        # picture = Picture()
+        # picture.get()
+        # if ev.currentTarget.src == "picture.jpg":
+        #     print("empty")
+        # else:
+        #     print("not empty")
+else:
+    print("!!!!!!!!!!button-load-image not found")
             
 
