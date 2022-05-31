@@ -33,6 +33,7 @@ class Stream(object):
             cv2.imwrite("picture.jpg",image)
             print("Picture saved!")
             self.stop()
+
     
     def load_picture(self,picture):
         print("load picture")

@@ -1,4 +1,4 @@
-from fastapi import FastAPI,File,UploadFile
+from fastapi import FastAPI,File,UploadFile,Form
 from fastapi.staticfiles import StaticFiles
 from Utils.routes_stream import Routes as Routes_stream
 from Utils.routes_page import Routes as Routes_page
@@ -13,6 +13,8 @@ from Utils.validation import Message
 from Utils.camera import Webcam
 from Utils.camera import Stream
 from Utils.validation import Switch
+import cv2
+import numpy as np
 
 
 class Routes():
@@ -211,7 +213,28 @@ class Routes():
 
 
         @app.post("/file_image/")
-        async def file(file:UploadFile):
-            self.filename = file.filename
-            "Read the image "
-            return {"file_name":file.filename}
+        def file(filename):
+            cv2.imread(filename)
+            
+            return {"file_name":filename}
+
+        @app.post("/submitform")
+        async def handle_form(my_picture_file:UploadFile = File(...)):
+            print("type of file : ",my_picture_file.content_type)
+            print("name of the file : ",my_picture_file.filename)
+            filename = my_picture_file.filename
+
+            image = cv2.imdecode(np.frombuffer(my_picture_file.file.read(), np.uint8),cv2.IMREAD_COLOR)
+
+
+
+            file = my_picture_file.file
+            # image = cv2.imread(filename)
+            print("type of image  : ",type(file))
+            print(file)
+            file = await open(file,"wb")
+
+            
+
+            #cv2.imshow("my window",image)
+            #content_of_picture = await my_picture_file.read()

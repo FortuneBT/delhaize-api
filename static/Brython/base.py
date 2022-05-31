@@ -5,6 +5,7 @@ from typing import Dict
 
 
 
+
 print("Brython activated!!!!!")
 print("Javascript = NO THANKS")
 
@@ -32,9 +33,9 @@ class Picture():
         request1.bind('complete',self.on_complete)
         request1.open('POST',"/file_image/",True)
         path_filename = document["formFileLg"].value
-        print(path_filename)
-        file = {'file': open(path_filename, 'rb')}
-        request1.send(file)
+        #print(path_filename)
+        #file = {'file': open(path_filename, 'rb')}
+        request1.send()
         print("Picture received")
     
     def on_complete(request1):
