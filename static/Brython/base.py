@@ -26,12 +26,25 @@ class Picture():
         request1.send(filename)
         print("Picture loaded")
     
+    def get(self):
+        print("function get -- request Picture")
+        request1 = self.request1
+        request1.bind('complete',self.on_complete)
+        request1.open('POST',"/file_image/",True)
+        path_filename = document["formFileLg"].value
+        print(path_filename)
+        file = {'file': open(path_filename, 'rb')}
+        request1.send(file)
+        print("Picture received")
+    
     def on_complete(request1):
         print("On complete loading picture")
         if request1.status == 200 or request1.status == 0:
             print("LOADING IS COMPLETE")
         elif request1.status == 422:
             pass
+        elif request1.status == 405:
+            print("METHOD NOT ALLOWED - code 405")
 
 class Switch_boutton():
     def __init__(self):
@@ -76,7 +89,6 @@ class Stream_state():
         print("start function stream")
         print("stream the path:",path)
         url4 = path
-        self.request4 = ajax.Ajax()
         self.request4.bind('complete', self.on_complete)
         self.request4.open('GET', url4, True)
         self.request4.send()
@@ -162,16 +174,20 @@ if "my_button_picture" in document:
             print("Change the text 'Take a picture' to 'Restart'")
             
         elif ev.currentTarget.text == "Restart":
+            state_stream = Stream_state()
+            state_stream.load("/camera/")
+            state_stream.load("/video_original/")
+            state_stream.load("/video_gray/")
+            state_stream.load("/video_blurr/")
+            #state_stream.load("/video_thresold/")
+            # state_stream.load("/video_frame/")
             reboot = Reboot()
             switch = Switch_boutton()
             switch.change(True)
             reboot.start()
-            # state_stream = Stream_state()
-            # state_stream.load("/video_original/")
-            # state_stream.load("/video_gray/")
-            # state_stream.load("/video_blurr/")
-            # state_stream.load("/video_thresold/")
-            # state_stream.load("/video_frame/")
+            
+            
+           
             
             document["my_button_picture"].text = "Take a picture"
             print("Change the text 'Restart' to 'Take a picture'")
@@ -183,11 +199,12 @@ if "my-loaded-image" in document:
     @bind('#button-load-image',"click")             
     def image_loaded(ev):
         print("loaded on #my-loaded-image !")
-        print(ev.currentTarget.src)
-        if ev.currentTarget.src == "picture.jpg":
-            print("empty")
-        else:
-            print("not empty")
+        picture = Picture()
+        picture.get()
+        # if ev.currentTarget.src == "picture.jpg":
+        #     print("empty")
+        # else:
+        #     print("not empty")
 else:
     print("!!!!!!!!!!my_loaded_image not found")
             

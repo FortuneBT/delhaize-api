@@ -16,7 +16,7 @@ class Stream(object):
     
     def start(self):
         print("start streaming of camera")
-        self.stream = cv2.VideoCapture(0)
+        self.stream = cv2.VideoCapture(-1)
         
 
     def stop(self):

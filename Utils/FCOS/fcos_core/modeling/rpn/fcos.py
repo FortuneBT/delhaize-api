@@ -1,6 +1,6 @@
 # uncompyle6 version 3.8.0
 # Python bytecode 3.6 (3379)
-# Decompiled from: Python 3.6.15 (default, Dec 21 2021, 12:03:22) 
+# Decompiled from: Python 3.6.15 (default, Dec 21 2021, 12:03:22)
 # [GCC 10.2.1 20210110]
 # Embedded file name: /home/cagatay/PycharmProjects/Expiry/FCOS/fcos_core/modeling/rpn/fcos.py
 # Compiled at: 2021-12-16 06:36:40
@@ -127,8 +127,8 @@ class FCOSModule(torch.nn.Module):
 
     def _forward_train(self, locations, box_cls, box_regression, centerness, targets):
         loss_box_cls, loss_box_reg, loss_centerness = self.loss_evaluator(locations, box_cls, box_regression, centerness, targets)
-        losses = {'loss_cls':loss_box_cls, 
-         'loss_reg':loss_box_reg, 
+        losses = {'loss_cls':loss_box_cls,
+         'loss_reg':loss_box_reg,
          'loss_centerness':loss_centerness}
         return (
          None, losses)
@@ -154,7 +154,7 @@ class FCOSModule(torch.nn.Module):
         shifts_y = torch.arange(0,
           (h * stride), step=stride, dtype=(torch.float32),
           device=device)
-        shift_y, shift_x = torch.meshgrid(shifts_y, shifts_x)
+        shift_y, shift_x = torch.meshgrid(shifts_y, shifts_x, indexing="ij")
         shift_x = shift_x.reshape(-1)
         shift_y = shift_y.reshape(-1)
         locations = torch.stack((shift_x, shift_y), dim=1) + stride // 2

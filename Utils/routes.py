@@ -1,4 +1,4 @@
-from fastapi import FastAPI
+from fastapi import FastAPI,File,UploadFile
 from fastapi.staticfiles import StaticFiles
 from Utils.routes_stream import Routes as Routes_stream
 from Utils.routes_page import Routes as Routes_page
@@ -21,16 +21,17 @@ class Routes():
         self.app = FastAPI()
         self.app.mount("/static", StaticFiles(directory="./static"), name="static")
         self.templates = Jinja2Templates(directory="templates")
-        self.webcam = Webcam()
-        self.webcam2 = Webcam()
-        self.webcam3 = Webcam()
-        self.webcam4 = Webcam()
-        self.webcam5 = Webcam()
+        self.webcam = None
+        self.webcam2 = None
+        self.webcam3 = None
+        self.webcam4 = None
+        self.webcam5 = None
         self.image = None
         self.requests = None
         self.stream = None
         self.pages = None
         self.switch = True
+        self.filename = None
         self.text = ""
         
     def create(self):
@@ -41,12 +42,21 @@ class Routes():
     def stop_stream(self):
         print("Stop Web Application Delhaize")
         self.stream.stop()
-        self.stream = None
+        
 
     def restart_stream(self):
         print("Restart Web Application Delhaize")
         self.stop_stream()
         self.start()
+
+    def start_webcam(self):
+        print("function start_webcam")
+        self.webcam = Webcam()
+        self.webcam2 = Webcam()
+        self.webcam3 = Webcam()
+        self.webcam4 = Webcam()
+        self.webcam5 = Webcam()
+        print("Webcam initialized")
 
 
     def get_stream(self):
@@ -66,6 +76,7 @@ class Routes():
 
     def start(self):
         print("Start Web Application Delhaize")
+        self.start_webcam()
         app = self.app
         templates = self.templates
         self.start_stream()
@@ -190,12 +201,17 @@ class Routes():
             print("self.webcam5 : ",self.webcam4.get_switch_webcam())
             print("self.webcam5 : ",self.webcam5.get_switch_webcam())
             if switch["state"] == True:
-                self.start_stream()
-                print("start streaming")
+                print("switch state is True")
             else:
-                self.stop_stream()
-                print("stop streaming")
+                print("switch state is False")
 
             #return {"Switch State":switch["state"]}
 
         print("Stream loaded")
+
+
+        @app.post("/file_image/")
+        async def file(file:UploadFile):
+            self.filename = file.filename
+            "Read the image "
+            return {"file_name":file.filename}
