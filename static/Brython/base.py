@@ -146,13 +146,21 @@ class Camera():
         #text = json.dumps({"text":"que la force soit avec toi!"})
         self.request.send()
         print("!!!!!!!SEND!!!!!!!")
+
+    def show(self):
+        print("start function show")
+        url = "/show_picture"
+        #self.request.bind('complete', self.on_complete)
+        self.request.open('POST', url, True)
+        self.request.send()
+        print("!!!!!!!SEND!!!!!!!")
             
     def on_complete(request):
         print("On complete shoot")
         if request.status == 200 or request.status == 0:
-            document["text_to_show"].html = request.text
-            document["my_button_picture"].text = "Restart"
-            print("Change the text 'Take a picture' to 'Restart'")
+            pass
+            #document["my_button_picture"].text = "Restart"
+            #print("Change the text 'Take a picture' to 'Restart'")
         elif request.status == 422:
             document["text_to_show"].html = request.text
         else:
@@ -176,27 +184,26 @@ if "my_button_picture" in document:
             switch = Switch_boutton()
             switch.change(False)
             cam.shoot()
-            document["my_button_picture"].text = "Restart"
-            print("Change the text 'Take a picture' to 'Restart'")
+            cam.show()
+            document["my_button_picture"].text = "Loading..."
+            print("Change the text 'Take a picture' to 'Loading...'")
             
-        elif ev.currentTarget.text == "Restart":
-            state_stream = Stream_state()
-            state_stream.load("/camera/")
-            state_stream.load("/video_original/")
-            state_stream.load("/video_gray/")
-            state_stream.load("/video_blurr/")
-            #state_stream.load("/video_thresold/")
-            # state_stream.load("/video_frame/")
-            reboot = Reboot()
-            switch = Switch_boutton()
-            switch.change(True)
-            reboot.start()
+        # elif ev.currentTarget.text == "Restart":
+        #     state_stream = Stream_state()
+        #     state_stream.load("/camera/")
+        #     state_stream.load("/video_original/")
+        #     state_stream.load("/video_gray/")
+        #     state_stream.load("/video_blurr/")
+        #     #state_stream.load("/video_thresold/")
+        #     # state_stream.load("/video_frame/")
+        #     reboot = Reboot()
+        #     switch = Switch_boutton()
+        #     switch.change(True)
+        #     reboot.start()
             
             
            
-            
-            document["my_button_picture"].text = "Take a picture"
-            print("Change the text 'Restart' to 'Take a picture'")
+           
             
             
 

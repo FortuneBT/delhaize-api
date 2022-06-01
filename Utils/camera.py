@@ -1,5 +1,7 @@
 import cv2
 from Utils.ocr import detect2
+import numpy as np
+import PIL.Image as Image
 
 
 
@@ -17,6 +19,7 @@ class Stream(object):
     def start(self):
         print("start streaming of camera")
         self.stream = cv2.VideoCapture(-1)
+    
         
 
     def stop(self):
@@ -33,7 +36,7 @@ class Stream(object):
             cv2.imwrite("picture.jpg",image)
             print("Picture saved!")
             self.stop()
-
+            
     
     def load_picture(self,picture):
         print("load picture")

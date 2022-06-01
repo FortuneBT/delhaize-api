@@ -2,9 +2,6 @@ from fastapi import FastAPI,File,UploadFile,Form
 from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
 from requests import request
-from Utils.routes_stream import Routes as Routes_stream
-from Utils.routes_page import Routes as Routes_page
-from Utils.routes_request import Routes as Routes_request
 from Utils.validation import Switch
 from fastapi.templating import Jinja2Templates
 from fastapi import Request
@@ -20,6 +17,7 @@ import numpy as np
 import main as m
 import json
 import base64
+from io import BytesIO
 
 
 class Routes():
@@ -153,7 +151,7 @@ class Routes():
         @app.post("/take_picture/")
         async def take_picture():         
             self.stream.save_picture()
-            picture = "./picture.jpg"
+            picture = "./picture2.jpg"
             self.image,jpg = self.stream.load_picture(picture)
             text = detect2(self.image)
             print("Request take a picture done")
@@ -251,7 +249,7 @@ class Routes():
             print("my_picture_file: ",type(my_picture_file))
             #print("my_picture_file.file: ",type(my_picture_file.file))
             self.source_filename = "picture2.jpg"
-            image = cv2.imdecode(np.frombuffer(file, np.uint16),cv2.IMREAD_COLOR)
+            image = cv2.imdecode(np.frombuffer(file, np.uint8),cv2.IMREAD_COLOR)
             cv2.imwrite("./static/Images/" + self.source_filename,image)
             print("Picture saved in 'picture2.jpg'")
             self.image = image
@@ -263,11 +261,25 @@ class Routes():
             context["source_filename"] = self.source_filename
             return templates.TemplateResponse("detected.html",context)
 
+        @app.post("/show_picture",response_class=HTMLResponse)
+        async def show_picture(request:Request):
+            filename = "./static/Images/picture2.jpg"
+            image = cv2.imread(filename)
+            print("Picture 'picture2.jpg' read")
+            self.image = image #detect_date() need self.image
+            self.detect_date()
+            context = {"request":request}
+            context["filename"] = filename
+            context["prediction"] = self.prediction
+            context["time_prediction"] = round(float(self.time_prediction),2)
+            context["source_filename"] = self.source_filename
+            return templates.TemplateResponse("detected.html",context)
+
 
         @app.post("/API")
         async def api(file:bytes=File()):
             print("type of file : ",type(file))
-            image = cv2.imdecode(np.frombuffer(file, np.uint16),cv2.IMREAD_COLOR)
+            image = cv2.imdecode(np.frombuffer(file, np.uint8),cv2.IMREAD_COLOR)
             self.image = image
             self.detect_date()
             context = {}

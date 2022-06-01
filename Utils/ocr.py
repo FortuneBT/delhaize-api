@@ -42,3 +42,4 @@ def detect2 (img):
     print("image processed")
     print(f"text is  : '{text}'")
     return text
+    pytesseract.im
