@@ -125,6 +125,13 @@ class Routes():
             return templates.TemplateResponse("camera.html",context)
 
 
+        @app.get("/my_api/",response_class=HTMLResponse)
+        async def my_api(request:Request):
+            print("loading my_api web page")
+            context = {"request":request}
+            return templates.TemplateResponse("my_api.html",context)
+
+
         @app.get("/picture/",response_class=HTMLResponse)
         async def picture(request:Request):
             print("loading picture")
