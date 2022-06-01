@@ -10,6 +10,8 @@ class Stream(object):
         print("Initializing Stream of camera") 
         self.stream = None
         self.text = None
+        self.frame = None
+
         self.start()
     
     def __del__(self):
@@ -33,10 +35,19 @@ class Stream(object):
         ret,image = self.stream.read()
         print(ret)
         if ret == True:
-            cv2.imwrite("picture.jpg",image)
+            cv2.imwrite("../static/Images/picture2.jpg",image)
             print("Picture saved!")
             self.stop()
-            
+        else:
+            print("failed to save picture. Could not read image (self.stream.read())")
+
+    def save_picture_camera(self):
+        print("save picture camera function")
+        cv2.imwrite("../static/Images/picture1.jpg",self.frame)
+        print("Picture saved!")
+        self.stop()
+    
+
     
     def load_picture(self,picture):
         print("load picture")
@@ -127,6 +138,8 @@ class Webcam():
                 frame = stream.get_frame()
             elif type_image == "video_frame":
                 frame = stream.get_real_frame()
+
+            self.frame = frame
 
             try:
                 yield (b'--frame\r\n' b'Content-Type: image/jpeg\r\n\r\n' +

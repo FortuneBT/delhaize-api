@@ -143,14 +143,20 @@ class Camera():
         self.request.bind('complete', self.on_complete)
         self.request.open('POST', url2, True)
         self.request.set_header('content-type', 'application/json')
-        #text = json.dumps({"text":"que la force soit avec toi!"})
+        self.request.send()
+        print("!!!!!!!SEND!!!!!!!")
+
+    def shoot_camera(self):
+        print("start function shoot")
+        url2 = "/take_picture_camera/"
+        self.request.open('POST', url2, True)
+        self.request.set_header('content-type', 'application/json')
         self.request.send()
         print("!!!!!!!SEND!!!!!!!")
 
     def show(self):
         print("start function show")
         url = "/show_picture"
-        #self.request.bind('complete', self.on_complete)
         self.request.open('POST', url, True)
         self.request.send()
         print("!!!!!!!SEND!!!!!!!")
@@ -159,8 +165,7 @@ class Camera():
         print("On complete shoot")
         if request.status == 200 or request.status == 0:
             pass
-            #document["my_button_picture"].text = "Restart"
-            #print("Change the text 'Take a picture' to 'Restart'")
+
         elif request.status == 422:
             document["text_to_show"].html = request.text
         else:
@@ -181,31 +186,12 @@ if "my_button_picture" in document:
         print(ev.currentTarget.text)
         if ev.currentTarget.text == "Take a picture":
             cam = Camera()
-            switch = Switch_boutton()
-            switch.change(False)
-            cam.shoot()
+            cam.shoot_camera()
             cam.show()
             document["my_button_picture"].text = "Loading..."
             print("Change the text 'Take a picture' to 'Loading...'")
             
-        # elif ev.currentTarget.text == "Restart":
-        #     state_stream = Stream_state()
-        #     state_stream.load("/camera/")
-        #     state_stream.load("/video_original/")
-        #     state_stream.load("/video_gray/")
-        #     state_stream.load("/video_blurr/")
-        #     #state_stream.load("/video_thresold/")
-        #     # state_stream.load("/video_frame/")
-        #     reboot = Reboot()
-        #     switch = Switch_boutton()
-        #     switch.change(True)
-        #     reboot.start()
-            
-            
-           
-           
-            
-            
+
 
 if "my-loaded-image" in document:
     print("my_loaded_image found")
@@ -214,14 +200,9 @@ if "my-loaded-image" in document:
         print("loaded on #my-loaded-image !")
         picture = Picture()
         picture.get()
-        # if ev.currentTarget.src == "picture.jpg":
-        #     print("empty")
-        # else:
-        #     print("not empty")
+
 else:
     print("!!!!!!!!!!my_loaded_image not found")
-            
-            
             
 
 if "button-load-image" in document:
@@ -230,12 +211,7 @@ if "button-load-image" in document:
     def image_load(ev):
         print("load on #button-load-image !")
         change_button()
-        # picture = Picture()
-        # picture.get()
-        # if ev.currentTarget.src == "picture.jpg":
-        #     print("empty")
-        # else:
-        #     print("not empty")
+
 else:
     print("!!!!!!!!!!button-load-image not found")
             

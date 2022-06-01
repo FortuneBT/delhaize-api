@@ -157,6 +157,15 @@ class Routes():
             print("Request take a picture done")
             return text
 
+        @app.post("/take_picture_camera/")
+        async def take_picture_camera():         
+            self.stream.save_picture_camera()
+            picture = "./picture1.jpg"
+            self.image,jpg = self.stream.load_picture(picture)
+            text = detect2(self.image)
+            print("Request take a picture done")
+            return text
+
         @app.post("/load_picture/")
         async def load_picture(message:Message):
             file_name = message
@@ -263,10 +272,12 @@ class Routes():
 
         @app.post("/show_picture",response_class=HTMLResponse)
         async def show_picture(request:Request):
-            filename = "./static/Images/picture2.jpg"
-            image = cv2.imread(filename)
-            print("Picture 'picture2.jpg' read")
+            filename = "picture1.jpg"
+            path = "../static/Images/"+filename
+            image = cv2.imread(path)
+            print("Picture 'picture1.jpg' read")
             self.image = image #detect_date() need self.image
+            cv2.imwrite("./static/Images/" + filename,image)
             self.detect_date()
             context = {"request":request}
             context["filename"] = filename
@@ -275,6 +286,7 @@ class Routes():
             context["source_filename"] = self.source_filename
             return templates.TemplateResponse("detected.html",context)
 
+        
 
         @app.post("/API")
         async def api(file:bytes=File()):
