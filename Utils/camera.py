@@ -1,3 +1,4 @@
+from re import X
 import cv2
 from Utils.ocr import detect2
 import numpy as np
@@ -42,8 +43,19 @@ class Stream(object):
             print("failed to save picture. Could not read image (self.stream.read())")
 
     def save_picture_camera(self):
+        frame = self.get_frame()
+        print(type(frame))
+        
+        nparr = np.fromstring(frame, np.uint8)
+        image = cv2.imdecode(nparr, cv2.CV_LOAD_IMAGE_COLOR) 
+        
+        
+        
         print("save picture camera function")
-        cv2.imwrite("../static/Images/picture1.jpg",self.frame)
+        try:
+            cv2.imwrite("/static/Images/picture1.jpg",image)
+        except:
+            print("SAVING PICTURE1.jpg didn't work")
         print("Picture saved!")
         self.stop()
     
@@ -57,7 +69,8 @@ class Stream(object):
         if ret == True:
             return image,jpeg.tobytes()
         else:
-            print("failed to read load_picture")
+            #print("failed to read load_picture")
+            pass
     
     def get_frame(self):
         ret,image = self.stream.read()
@@ -66,7 +79,8 @@ class Stream(object):
             if ret == True:
                 return jpeg.tobytes()
         else:
-            print("failed to read get_frame")
+            #print("failed to read get_frame")
+            pass
     
     def get_real_frame(self):
         ret,image = self.stream.read()
@@ -77,7 +91,8 @@ class Stream(object):
             if ret == True:
                 return jpeg.tobytes()
         else:
-            print("failed to read get_real_frame")
+            #print("failed to read get_real_frame")
+            pass
     
     def get_gray_frame(self):
         ret,image = self.stream.read()
@@ -87,7 +102,8 @@ class Stream(object):
             if ret == True:
                 return jpeg.tobytes()
         else:
-            print("failed to read get_gray_frame")
+            #print("failed to read get_gray_frame")
+            pass
 
     def get_blurr_frame(self):
         ret,image = self.stream.read()
@@ -98,8 +114,8 @@ class Stream(object):
             if ret == True:
                 return jpeg.tobytes()
         else:
-            print("failed to read get_blurr_frame")
-
+            #print("failed to read get_blurr_frame")
+            pass
 
     def get_thresold_frame(self):
         ret,image = self.stream.read()
@@ -111,7 +127,8 @@ class Stream(object):
             if ret == True:
                 return jpeg.tobytes()
         else:
-            print("failed to read get_thresold_frame")
+            #print("failed to read get_thresold_frame")
+            pass
 
 
 class Webcam():
@@ -139,10 +156,10 @@ class Webcam():
             elif type_image == "video_frame":
                 frame = stream.get_real_frame()
 
-            self.frame = frame
 
             try:
                 yield (b'--frame\r\n' b'Content-Type: image/jpeg\r\n\r\n' +
                 bytearray(frame) + b'\r\n')
             except:
-                print("Error - FAILED TO GET FRAME")
+                #print("Error - FAILED TO GET FRAME")
+                pass

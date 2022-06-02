@@ -272,12 +272,15 @@ class Routes():
 
         @app.post("/show_picture",response_class=HTMLResponse)
         async def show_picture(request:Request):
+            self.stream.save_picture_camera()
+            
             filename = "picture1.jpg"
             path = "../static/Images/"+filename
             image = cv2.imread(path)
             print("Picture 'picture1.jpg' read")
             self.image = image #detect_date() need self.image
-            cv2.imwrite("./static/Images/" + filename,image)
+            #cv2.imwrite("./static/Images/" + filename,image)
+            
             self.detect_date()
             context = {"request":request}
             context["filename"] = filename
